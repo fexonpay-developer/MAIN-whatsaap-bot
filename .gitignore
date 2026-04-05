@@ -1,0 +1,28 @@
+# Secrets
+.env
+.env.backup_day6
+credentials.json
+token.json
+token.pickle
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+
+# Logs and runtime
+processed_messages.txt
+processed_messages_prod.txt
+pdfs/
+
+# Old backups
+*.backup
+*.backup_day6
+*.backup_day7
+main_backup_20260316.py
+main_stub_april5.py
+fexonpay_brain_backup_20260316.py
+fexonpay_brain2.py
