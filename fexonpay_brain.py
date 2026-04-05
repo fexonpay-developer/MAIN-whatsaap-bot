@@ -53,6 +53,7 @@ Multiple categories:
 
 Add employee:
 {"action":"add_employee","raw":"[full original text]","reply":"Adding employee..."}
+{"action":"remove_employee","raw":"[full original text]","reply":"Removing employee..."}
 
 Convert quote to invoice:
 {"action":"quote_to_invoice","quote_number":"QT-00001","reply":"Converting..."}

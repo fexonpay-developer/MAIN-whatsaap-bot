@@ -750,6 +750,21 @@ class AccountsManager:
         except Exception as e:
             return f"Error adding employee: {e}"
 
+    def remove_employee(self, customer_id: str, text: str) -> str:
+        try:
+            parts = text.lower().replace('remove employee', '').replace('delete employee', '').strip()
+            name = parts.strip()
+            if not name:
+                return "❌ Please provide employee name. Example: remove employee Ali"
+            r = self.db.table('employees').select('*')                 .eq('customer_id', customer_id)                 .eq('status', 'active')                 .ilike('name', f'%{name}%').execute()
+            if not r.data:
+                return f"❌ No active employee found matching '{name}'"
+            emp = r.data[0]
+            self.db.table('employees').update({'status': 'inactive'})                 .eq('id', emp['id']).execute()
+            return f"✅ {emp['name']} removed from payroll."
+        except Exception as e:
+            return f"❌ Error removing employee: {e}"
+
     def run_payroll(self, customer_id: str) -> str:
         now       = datetime.now()
         month_yr  = now.strftime('%Y-%m')

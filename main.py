@@ -647,6 +647,26 @@ async def openclaw_webhook(request: Request):
         fast_result = {'action': 'memory', 'reply': 'Loading preferences...'}
 
     # Debt report
+    elif t in ['FORECAST', 'RAMALAN', 'PROJECTION']:
+        fast_result = {'action': 'forecast', 'reply': 'Loading forecast...'}
+    elif t in ['HEALTH', 'HEALTH SCORE', 'SKOR KESIHATAN']:
+        fast_result = {'action': 'health_score', 'reply': 'Loading health score...'}
+    elif t in ['SST', 'TAX', 'CUKAI']:
+        fast_result = {'action': 'sst_check', 'reply': 'Checking SST...'}
+    elif t in ['CASHFLOW STATEMENT', 'CASH FLOW STATEMENT', 'CF']:
+        fast_result = {'action': 'cashflow_statement', 'period': 'this_month', 'reply': 'Loading cashflow...'}
+    elif t in ['BALANCE SHEET', 'BS', 'LEMBARAN IMBANGAN']:
+        fast_result = {'action': 'balance_sheet', 'reply': 'Loading balance sheet...'}
+    elif t in ['AUDIT', 'AUDIT TRAIL']:
+        fast_result = {'action': 'audit_trail', 'reply': 'Loading audit trail...'}
+    elif t in ['BUDGET VS ACTUAL', 'BUDGET ACTUAL']:
+        fast_result = {'action': 'budget_vs_actual', 'reply': 'Loading budget vs actual...'}
+    elif t in ['PAYROLL', 'GAJI', 'RUN PAYROLL']:
+        fast_result = {'action': 'run_payroll', 'reply': 'Running payroll...'}
+    elif t in ['QUOTES', 'QUOTATIONS', 'SEBUTHARGA']:
+        fast_result = {'action': 'quote_list', 'reply': 'Loading quotes...'}
+    elif t in ['CASH SUMMARY', 'CASH REPORT']:
+        fast_result = {'action': 'cash_summary', 'reply': 'Loading cash summary...'}
     elif t in ['OWE', 'HUTANG', 'DEBT', 'SIAPA HUTANG']:
         fast_result = {'action': 'owe', 'reply': 'Loading debt report...'}
     # Invoice command -- starts with INVOICE or INVOIS
@@ -914,11 +934,13 @@ async def openclaw_webhook(request: Request):
 
     elif action == 'cashflow_statement':
         period = result.get('period', 'this_month')
-        reply  = finance.generate_cashflow(customer_id, period)
+        reply  = accounts.generate_cashflow(customer_id, period)
 
     elif action == 'sst_check':
         reply = accounts.check_sst(customer_id)
 
+    elif action == 'remove_employee':
+        reply = accounts.remove_employee(customer_id, result.get('raw', text))
     elif action == 'run_payroll':
         reply = accounts.run_payroll(customer_id)
 
