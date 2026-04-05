@@ -100,7 +100,7 @@ class AccountsManager:
     def __init__(self):
         self.db     = create_client(os.environ['SUPABASE_URL'], os.environ['SUPABASE_ANON_KEY'])
         self.ai     = Together(api_key=os.environ['TOGETHER_API_KEY'])
-        self.pdf_dir = pathlib.Path('/home/fexonpay/pdfs/reports')
+        self.pdf_dir = pathlib.Path('/home/fexonpay-prod/pdfs/reports')
         self.pdf_dir.mkdir(parents=True, exist_ok=True)
 
     # ── Internal helpers ──────────────────────────────────────────────────────

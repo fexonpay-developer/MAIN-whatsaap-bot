@@ -19,11 +19,13 @@ from fexonpay_brain import Brain
 from fexonpay_finance import FinanceManager
 from fexonpay_cash import CashManager
 from fexonpay_quotation import QuotationManager
+from fexonpay_accounts import AccountsManager
 memory = MemorySystem()
 brain = Brain()
 finance = FinanceManager()
 cash_manager = CashManager()
 quotation = QuotationManager()
+accounts = AccountsManager()
 
 load_dotenv()
 
@@ -623,6 +625,8 @@ async def openclaw_webhook(request: Request):
     elif t in ['HELP', 'TOLONG', 'MENU', '?']:
         fast_result = {'action': 'help', 'reply': 'Loading menu...'}
     # Dashboard / cashflow
+    elif t in ['P&L', 'PL', 'PROFIT', 'PROFIT AND LOSS', 'UNTUNG RUGI']:
+        fast_result = {'action': 'pl_statement', 'period': 'this_month', 'reply': 'Loading P&L...'}
     elif t in ['DASHBOARD', 'STATUS', 'SUMMARY', 'CASHFLOW', 'CASH FLOW', 'RINGKASAN']:
         fast_result = {'action': 'dashboard', 'reply': 'Loading dashboard...'}
 
@@ -903,32 +907,32 @@ async def openclaw_webhook(request: Request):
 
     elif action == 'pl_statement':
         period = result.get('period', 'this_month')
-        reply  = finance.generate_pl(customer_id, period)
+        reply  = accounts.generate_pl(customer_id, period)
 
     elif action == 'balance_sheet':
-        reply = finance.generate_balance_sheet(customer_id)
+        reply = accounts.generate_balance_sheet(customer_id)
 
     elif action == 'cashflow_statement':
         period = result.get('period', 'this_month')
         reply  = finance.generate_cashflow(customer_id, period)
 
     elif action == 'sst_check':
-        reply = finance.check_sst(customer_id)
+        reply = accounts.check_sst(customer_id)
 
     elif action == 'run_payroll':
-        reply = finance.run_payroll(customer_id)
+        reply = accounts.run_payroll(customer_id)
 
     elif action == 'add_employee':
-        reply = finance.add_employee(customer_id, result.get('raw', text))
+        reply = accounts.add_employee(customer_id, result.get('raw', text))
 
     elif action == 'forecast':
-        reply = finance.forecast(customer_id)
+        reply = accounts.forecast(customer_id)
 
     elif action == 'health_score':
-        reply = finance.health_score(customer_id)
+        reply = accounts.health_score(customer_id)
 
     elif action == 'set_category':
-        reply = finance.set_category(customer_id, result.get('raw', text))
+        reply = accounts.set_category(customer_id, result.get('raw', text))
 
     elif action == 'dashboard':
         reply = finance.get_dashboard(customer_id)
