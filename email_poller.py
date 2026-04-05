@@ -282,9 +282,9 @@ def poll_emails():
                 subject += part.decode(enc or "utf-8", errors="replace") if isinstance(part, bytes) else part
             sender = msg.get("From","")
             sender_email = sender.split("<")[1].rstrip(">") if "<" in sender else sender
-            # if sender_email.lower() in [GMAIL_USER.lower(), "fexonpay@gmail.com"]:
-            #     mail.store(eid, "+FLAGS", "\\Seen")
-            #     continue
+            if sender_email.lower() in [GMAIL_USER.lower(), "fexonpay@gmail.com"]:
+                mail.store(eid, "+FLAGS", "\\Seen")
+                continue
             kws = ["invoice","invois","bil","receipt","resit","payment","bayaran","quotation"]
             if not any(k in subject.lower() for k in kws):
                 print(f"[Poller] Skipping: {subject}")

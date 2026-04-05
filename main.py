@@ -963,23 +963,7 @@ async def openclaw_webhook(request: Request):
                 amt = float(i.get('amount', 0)); total += amt
                 reply += f'- {i.get("vendor_name", "Vendor")}: RM{amt:,.2f}\n'
             reply += f'   Total: RM{total:,.2f}\n'
-    elif action == 'owe':
-        ar = db.table('self_invoices').select('*').eq('customer_id', customer_id).neq('status', 'paid').execute()
-        ap = db.table('transactions').select('*').eq('customer_id', customer_id).eq('payment_status', 'pending').execute()
-        if not ar.data: reply += 'None\n'
-        else:
-            total = 0
-            for i in ar.data:
-                amt = float(i.get('grand_total', 0)); total += amt
-                reply += f'- {i.get("vendor_name")}: RM{amt:,.2f}\n'
-            reply += f'   Total: RM{total:,.2f}\n'
-        if not ap.data: reply += 'None\n'
-        else:
-            total = 0
-            for i in ap.data:
-                amt = float(i.get('amount', 0)); total += amt
-                reply += f'- {i.get("vendor_name", "Vendor")}: RM{amt:,.2f}\n'
-            reply += f'   Total: RM{total:,.2f}\n'
+
     elif action == 'budget_set':
         category = result.get('category', '')
         amount   = float(result.get('amount', 0))
