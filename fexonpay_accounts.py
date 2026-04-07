@@ -293,7 +293,7 @@ class AccountsManager:
 
         # Revenue
         service_revenue = sum(float(i['grand_total']) for i in invoices
-                              if i.get('status') in ['paid', 'ready', 'sent'])
+                              if i.get('status') in ['paid'])
         cash_sales      = sum(float(r['amount']) for r in cash_in if r.get('direction') == 'in')
         total_revenue   = service_revenue + cash_sales
         returns         = 0.0
