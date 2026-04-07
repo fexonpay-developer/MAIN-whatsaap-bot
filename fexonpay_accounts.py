@@ -723,7 +723,8 @@ class AccountsManager:
             ic      = re.search(r'IC[:\s]+(\d{12})', text, re.I)
             salary  = re.search(r'SALARY[:\s]+([\d,\.]+)', text, re.I)
             sal_val = float(salary.group(1).replace(',', '')) if salary else 0
-            name_val= name.group(1).strip() if name else 'Unknown'
+            ic_val_tmp = ic.group(1) if ic else ''
+            name_val= name.group(1).strip() if name else (f'Employee {ic_val_tmp[-4:]}' if ic_val_tmp else 'Unknown')
             ic_val  = ic.group(1) if ic else ''
             if sal_val <= 0:
                 return "Please specify salary. Example: *ADD EMPLOYEE Ali IC:123456789012 SALARY:3500*"
