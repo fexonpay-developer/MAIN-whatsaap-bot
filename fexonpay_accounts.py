@@ -66,7 +66,7 @@ SST_THRESHOLD = 500000      # RM500,000 annual revenue threshold
 EXPENSE_CATEGORIES = [
     'materials', 'labour', 'transport', 'utilities',
     'professional', 'rent', 'equipment', 'marketing',
-    'meals', 'salary', 'others'
+    'meals', 'salary', 'cleaning', 'general', 'others'
 ]
 
 CATEGORY_KEYWORDS = {
@@ -92,6 +92,10 @@ CATEGORY_KEYWORDS = {
                       'restaurant', 'cafe', 'entertainment', 'drinks'],
     'salary':        ['salary', 'gaji', 'wages', 'allowance', 'elaun', 'bonus',
                       'commission', 'epf', 'socso', 'payroll'],
+    'cleaning':      ['cleaning', 'cuci', 'cleaner', 'housekeeping', 'sanitize',
+                      'basuh', 'sweep', 'mop', 'laundry'],
+    'general':       ['general', 'am', 'miscellaneous', 'misc', 'lain', 'other expense',
+                      'general expense', 'general expenses'],
 }
 
 
