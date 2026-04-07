@@ -628,7 +628,7 @@ async def openclaw_webhook(request: Request):
     elif t in ['HELP', 'TOLONG', 'MENU', '?']:
         fast_result = {'action': 'help', 'reply': 'Loading menu...'}
     # Dashboard / cashflow
-    elif t in ['P&L', 'PL', 'PROFIT', 'PROFIT AND LOSS', 'UNTUNG RUGI']:
+    elif t in ['P&L', 'PL', 'PNL', 'P AND L', 'PROFIT', 'PROFIT AND LOSS', 'UNTUNG RUGI']:
         fast_result = {'action': 'pl_statement', 'period': 'this_month', 'reply': 'Loading P&L...'}
     elif t in ['DASHBOARD', 'STATUS', 'SUMMARY', 'CASHFLOW', 'CASH FLOW', 'RINGKASAN']:
         fast_result = {'action': 'dashboard', 'reply': 'Loading dashboard...'}
