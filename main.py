@@ -601,6 +601,9 @@ async def openclaw_webhook(request: Request):
             fast_result = {'action': 'confirm', 'reply': 'Confirming...'}
     elif t in ['CANCEL', 'BATAL', 'NO', 'TAK', 'TAK NAK', 'CANCELLED']:
         fast_result = {'action': 'cancel', 'reply': 'Cancelled.'}
+    elif t.startswith('PAY IV-') or t.startswith('BAYAR IV-'):
+        invoice_ref = t.split()[1]
+        fast_result = {'action': 'mark_paid', 'invoice_ref': invoice_ref, 'reply': 'Marking invoice as paid...'}
     elif t in ['PAY', 'BAYAR']:
         fast_result = {'action': 'pay', 'reply': 'Processing payment...'}
     elif t in ['SKIP', 'LATER', 'LEPAS NI']:
@@ -750,6 +753,20 @@ async def openclaw_webhook(request: Request):
         else:
             reply = "No pending invoice to cancel."
 
+    elif action == 'mark_paid':
+        invoice_ref = fast_result.get('invoice_ref', '')
+        result = db.table('self_invoices').select('*').eq('customer_id', customer_id).eq('invoice_number', invoice_ref).execute()
+        if not result.data:
+            reply = f"❌ Invoice {invoice_ref} not found."
+        elif result.data[0]['status'] == 'paid':
+            reply = f"✅ {invoice_ref} is already marked as paid."
+        else:
+            inv = result.data[0]
+            db.table('self_invoices').update({'status': 'paid'}).eq('customer_id', customer_id).eq('invoice_number', invoice_ref).execute()
+            reply = (f"✅ *{invoice_ref} Marked as Paid*\n\n"
+                     f"Client: {inv['vendor_name']}\n"
+                     f"Amount: RM{float(inv['grand_total']):.2f}\n"
+                     f"Date: {datetime.now().strftime('%d/%m/%Y')}")
     elif action == 'pay':
         if from_number not in pending_payments:
             reply = "No pending payment. Create an invoice first."
@@ -1008,6 +1025,12 @@ async def openclaw_webhook(request: Request):
 
     elif action == 'budget_check':
         reply = finance.get_budget_check(customer_id)
+
+    elif action == 'budget_vs_actual':
+        reply = accounts.budget_vs_actual(customer_id)
+
+    elif action == 'audit_trail':
+        reply = accounts.get_audit_trail(customer_id)
 
     elif action == 'setup_billplz':
         api_key       = result.get('api_key', '')

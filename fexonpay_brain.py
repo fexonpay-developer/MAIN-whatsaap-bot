@@ -57,6 +57,8 @@ Add employee:
 
 Convert quote to invoice:
 {"action":"quote_to_invoice","quote_number":"QT-00001","reply":"Converting..."}
+Vendor history:
+{"action":"vendor_history","vendor_name":"Ali","reply":"Loading vendor history..."}
 
 If the message is a question, advisory request, or you cannot clearly extract an action:
 {"action":"needs_advisor","reply":""}
@@ -66,6 +68,11 @@ If the message is a question, advisory request, or you cannot clearly extract an
 "Ahmad bayar RM500 cash tadi" -> cash_record
 "quote Reza RM3000 rewiring" -> quote
 "Ali Hardware tu masuk category materials" -> set_category
+"TNB is utilities" -> set_category
+"vendor history ali" -> {"action":"vendor_history","vendor_name":"ali","reply":"Loading vendor history..."}
+"history with TNB" -> {"action":"vendor_history","vendor_name":"TNB","reply":"Loading vendor history..."}
+"Petronas is transport" -> set_category
+"[vendor] is [category]" -> set_category
 "set budget cleaning RM2000 dan transport RM500" -> budget_set bulk
 "what is EPF?" -> needs_advisor
 "am I making money?" -> needs_advisor
