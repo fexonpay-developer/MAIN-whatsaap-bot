@@ -605,7 +605,7 @@ async def openclaw_webhook(request: Request):
         invoice_ref = t.split()[1]
         fast_result = {'action': 'mark_paid', 'invoice_ref': invoice_ref, 'reply': 'Marking invoice as paid...'}
     elif t in ['PAY', 'BAYAR']:
-        fast_result = {'action': 'pay', 'reply': 'Processing payment...'}
+        fast_result = {'action': 'reply', 'reply': 'To mark an invoice as paid, reply:\n*PAY IV-XXXXX*\n\nExample: PAY IV-00026'}
     elif t in ['SKIP', 'LATER', 'LEPAS NI']:
         fast_result = {'action': 'skip', 'reply': 'Skipped.'}
     # Cash category selection (1-8)
@@ -774,9 +774,9 @@ async def openclaw_webhook(request: Request):
             payment  = pending_payments[from_number]
             customer = get_customer(from_number)
             if not customer or not customer.get('billplz_api_key'):
-                reply = ("⚠️ *Billplz not set up yet.*\n\n"
-                         "Tell me your Billplz API key and collection ID to enable payments.\n"
-                         "Example: Setup Billplz abc123 xyz456")
+                reply = ("To mark an invoice as paid, reply:\n"
+                         "*PAY IV-XXXXX*\n\n"
+                         "Example: PAY IV-00026")
             else:
                 bank_info = get_vendor_bank(customer_id, payment['vendor_id'])
                 if not bank_info:
