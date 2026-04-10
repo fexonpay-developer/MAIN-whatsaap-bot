@@ -240,22 +240,12 @@ class FinanceManager:
 
     def get_vendors_summary(self, customer_id: str) -> str:
         try:
-            result = self.db.table('vendors') \
-                .select('vendor_id, vendor_name') \
-                .eq('customer_id', customer_id) \
-                .execute()
-
-            if not result.data:
-                return "No vendors recorded yet."
-
             vendor_spend = self._spend_by_vendor(customer_id, 365)
-
+            if not vendor_spend:
+                return "No vendors recorded yet."
             lines = ['🏢 *Your Vendors*', '']
-            for vendor in result.data[:10]:
-                name  = vendor['vendor_name']
-                spend = vendor_spend.get(name, 0)
+            for name, spend in list(vendor_spend.items())[:10]:
                 lines.append(f'  • {name}: RM{spend:.2f} total paid')
-
             return '\n'.join(lines)
 
         except Exception as e:
