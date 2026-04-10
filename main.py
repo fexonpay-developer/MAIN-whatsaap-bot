@@ -536,6 +536,7 @@ def format_invoice_saved_message(saved, email_sent=False):
     status = "Saved & Emailed! 📧" if email_sent else "Saved!"
     msg = f"✅ *Invoice #{saved['invoice_number']} {status}*\n\n"
     msg += f"Vendor: {saved['vendor_name']}\n"
+    msg += f"Description: {saved.get('description', '-')}\n"
     msg += f"Total: RM{saved['grand_total']:.2f}\n"
     msg += f"Due: {saved['due_date']}\n"
     msg += f"Term: {saved['payment_term']}\n\n"
