@@ -309,6 +309,41 @@ def poll_emails():
                 is_pdf   = content_type == "application/pdf" or filename_lower.endswith(".pdf")
                 is_csv   = filename_lower.endswith(".csv")
                 is_excel = filename_lower.endswith((".xlsx",".xls"))
+                is_zip   = filename_lower.endswith(".zip")
+                if is_zip:
+                    import zipfile, io
+                    zip_bytes = part.get_payload(decode=True)
+                    all_invoices = []
+                    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+                        for zname in zf.namelist():
+                            zdata = zf.read(zname)
+                            if zname.lower().endswith(".pdf"):
+                                ztxt = extract_text_from_pdf(zdata)
+                            elif zname.lower().endswith(".csv"):
+                                ztxt = extract_text_from_csv(zdata)
+                            elif zname.lower().endswith((".xlsx",".xls")):
+                                ztxt = extract_text_from_excel(zdata)
+                            else:
+                                continue
+                            invs = extract_invoices(ztxt, sender_email) if ztxt else None
+                            if invs:
+                                all_invoices.extend(invs)
+                    if all_invoices:
+                        total_saved, total_amt = 0, 0
+                        lines = ["📦 *ZIP Bills Received*", f"From: {sender_email}", f"{len(all_invoices)} invoices found", ""]
+                        for inv in all_invoices:
+                            cat = auto_categorise(inv.get("vendor_name", sender_email))
+                            saved = save_expense(customer_id, business_name, inv, sender_email, cat) if customer_id else False
+                            if saved: total_saved += 1
+                            amt = float(inv.get("total_amount", 0))
+                            total_amt += amt
+                            lines.append(f"  • {inv.get('vendor_name','?')} RM{amt:.2f} → {cat}")
+                        lines += ["", f"✅ {total_saved}/{len(all_invoices)} saved.", f"Total: RM{total_amt:.2f}"]
+                        send_whatsapp(notify_phone, "\n".join(lines))
+                    else:
+                        send_whatsapp(notify_phone, f"📦 ZIP received from {sender_email} but no invoices could be extracted.")
+                    found = True
+                    continue
                 if not (is_pdf or is_csv or is_excel):
                     continue
                 attach_bytes = part.get_payload(decode=True)
