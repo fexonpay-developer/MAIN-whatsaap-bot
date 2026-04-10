@@ -635,6 +635,13 @@ async def openclaw_webhook(request: Request):
         fast_result = {'action': 'dashboard', 'reply': 'Loading dashboard...'}
 
     # Vendors list
+    elif t.startswith('SET EMAIL ') or t.startswith('MY EMAIL '):
+        new_email = text.strip().split()[-1].lower()
+        if '@' in new_email:
+            db.table('customers').update({'email': new_email}).eq('customer_id', customer_id).execute()
+            fast_result = {'action': 'reply', 'reply': f'✅ Email updated to *{new_email}*'}
+        else:
+            fast_result = {'action': 'reply', 'reply': 'Invalid email. Example: *set email yourname@gmail.com*'}
     elif t in ['VENDORS', 'VENDOR LIST', 'SENARAI VENDOR']:
         fast_result = {'action': 'vendors', 'reply': 'Loading vendors...'}
 
