@@ -988,6 +988,30 @@ async def openclaw_webhook(request: Request):
         reply = result_cash.get('reply', '✅ Cash recorded.')
         if result_cash.get('needs_category'):
             set_pending(from_number, {'type': 'cash_category', 'receipt_number': result_cash.get('receipt_number')})
+        # Email notification to owner
+        if result_cash.get('receipt_number'):
+            try:
+                company_email = os.getenv('COMPANY_EMAIL')
+                app_password  = os.getenv('EMAIL_APP_PASSWORD')
+                cust          = get_customer(from_number)
+                target_email  = (cust.get('email') if cust else None) or company_email
+                if company_email and app_password and target_email:
+                    direction  = 'in' if 'Received' in reply else 'out'
+                    subj       = f"Cash {'Received' if direction == 'in' else 'Paid'} — {result_cash.get('receipt_number')}"
+                    body       = reply.replace('*', '')
+                    msg        = MIMEMultipart()
+                    msg['From']    = company_email
+                    msg['To']      = target_email
+                    msg['Subject'] = subj
+                    msg.attach(MIMEText(body, 'plain'))
+                    srv = smtplib.SMTP('smtp.gmail.com', 587)
+                    srv.starttls()
+                    srv.login(company_email, app_password)
+                    srv.sendmail(company_email, [target_email], msg.as_string())
+                    srv.quit()
+                    print(f"DEBUG: Cash receipt email sent to {target_email}")
+            except Exception as e:
+                print(f"DEBUG: Cash email error: {e}")
     elif action == 'owe':
         ar = db.table('self_invoices').select('*').eq('customer_id', customer_id).neq('status', 'paid').execute()
         ap = db.table('transactions').select('*').eq('customer_id', customer_id).eq('payment_status', 'pending').execute()
