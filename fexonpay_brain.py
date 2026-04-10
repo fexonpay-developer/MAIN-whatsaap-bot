@@ -78,6 +78,9 @@ If the message is a question, advisory request, or you cannot clearly extract an
 "am I making money?" -> needs_advisor
 "macam mana nak handle SST?" -> needs_advisor
 "I don't know what to do for tax" -> needs_advisor
+"how much did I spend" -> {"action":"spend","days":30,"reply":"Loading spend summary..."}
+"berapa I spend this week" -> {"action":"spend","days":7,"reply":"Loading spend summary..."}
+"spending last 7 days" -> {"action":"spend","days":7,"reply":"Loading spend summary..."}
 """
 
 # -- Tier 2: Full Malaysian accounting advisor prompt (70B model) --------------
