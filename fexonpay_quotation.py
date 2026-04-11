@@ -288,7 +288,7 @@ Rules:
 </html>"""
 
         import pathlib
-        pathlib.Path('/home/fexonpay/pdfs/quotes').mkdir(parents=True, exist_ok=True)
+        pathlib.Path('/home/fexonpay-prod/pdfs/quote').mkdir(parents=True, exist_ok=True)
 
         with tempfile.NamedTemporaryFile(suffix='.html', delete=False, mode='w') as f:
             f.write(html)
@@ -296,7 +296,7 @@ Rules:
 
         # Save PDF permanently for WhatsApp link
         quote_num = quote_data.get('quote_number', 'QT-00001')
-        pdf_path = f'/home/fexonpay/pdfs/quotes/Quote_{quote_num}.pdf'
+        pdf_path = f'/home/fexonpay-prod/pdfs/quote/Quote_{quote_num}.pdf'
 
         try:
             pdfkit.from_file(html_path, pdf_path, options={
