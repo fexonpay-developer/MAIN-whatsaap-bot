@@ -248,7 +248,7 @@ async def extract_payment_with_ai(text: str):
         response = together_client.chat.completions.create(
             model='meta-llama/Llama-3.3-70B-Instruct-Turbo',
             messages=[{'role': 'user', 'content': prompt}],
-            max_tokens=512, temperature=0.1
+            max_tokens=300, temperature=0.1
         )
         return json.loads(response.choices[0].message.content)
     except Exception as e:
@@ -275,7 +275,7 @@ async def extract_invoice_details_for_self(text: str):
         response = together_client.chat.completions.create(
             model='meta-llama/Llama-3.3-70B-Instruct-Turbo',
             messages=[{'role': 'user', 'content': prompt}],
-            max_tokens=512, temperature=0.1
+            max_tokens=300, temperature=0.1
         )
         result_text = response.choices[0].message.content.strip()
         print(f"DEBUG: Raw AI response: {result_text}")
@@ -464,7 +464,9 @@ body {{ font-family: Arial, sans-serif; color: #111; margin: 0; padding: 50px; f
 </html>"""
 
     filename = f"Invoice_{saved_invoice['invoice_number']}.pdf"
-    filepath = f"/tmp/{filename}"
+    import pathlib
+    pathlib.Path('/home/fexonpay-prod/pdfs/invoices').mkdir(parents=True, exist_ok=True)
+    filepath = f"/home/fexonpay-prod/pdfs/invoices/{filename}"
 
     try:
         pdfkit.from_string(html_content, filepath, options={
@@ -493,7 +495,6 @@ body {{ font-family: Arial, sans-serif; color: #111; margin: 0; padding: 50px; f
         server.sendmail(company_email, destinations, msg.as_string())
         server.quit()
 
-        os.remove(filepath)
         print(f"DEBUG: Emailed PDF invoice {filename} to {target_email} (CC: {cc_email})")
         return True
 
@@ -541,6 +542,9 @@ def format_invoice_saved_message(saved, email_sent=False):
     msg += f"Due: {saved['due_date']}\n"
     msg += f"Term: {saved['payment_term']}\n\n"
     msg += f"Reply *PAY {saved['invoice_number']}* when {saved['vendor_name']} settles this invoice."
+    inv_num = saved.get('invoice_number', '')
+    pdf_link = f"https://api.fexonpay.com/pdf/invoice/Invoice_{inv_num}.pdf"
+    msg += f"\n\n📄 View Invoice PDF:\n{pdf_link}"
     return msg
 
 def format_payment_confirmation(vendor_name, amount, due_date, bank_info=None):

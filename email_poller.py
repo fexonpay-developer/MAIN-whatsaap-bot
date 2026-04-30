@@ -285,7 +285,7 @@ def poll_emails():
             if sender_email.lower() in [GMAIL_USER.lower(), "fexonpay@gmail.com"]:
                 mail.store(eid, "+FLAGS", "\\Seen")
                 continue
-            kws = ["invoice","invois","bil","receipt","resit","payment","bayaran","quotation"]
+            kws = ["invoice","invois","bill","bills","bil","receipt","resit","payment","bayaran","quotation","expense","perbelanjaan"]
             if not any(k in subject.lower() for k in kws):
                 print(f"[Poller] Skipping: {subject}")
                 mail.store(eid, "+FLAGS", "\\Seen")

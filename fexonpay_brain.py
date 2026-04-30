@@ -217,7 +217,7 @@ class Brain:
                     {'role': 'system', 'content': ACTION_PROMPT + pending},
                     {'role': 'user',   'content': text}
                 ],
-                max_tokens=250,
+                max_tokens=150,
                 temperature=0.1
             )
             raw = response.choices[0].message.content.strip()
@@ -251,7 +251,7 @@ class Brain:
                     {'role': 'system', 'content': ADVISOR_PROMPT + f"\n\n{context}"},
                     {'role': 'user',   'content': text}
                 ],
-                max_tokens=700,
+                max_tokens=500,
                 temperature=0.4
             )
             raw = response.choices[0].message.content.strip()
