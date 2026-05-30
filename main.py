@@ -573,6 +573,17 @@ async def openclaw_webhook(request: Request):
 
     if not text or not from_number:
         return {'status': 'ok'}
+    # Drop openclaw agent echoes (reformatted copies of user messages)
+    import time as _t, unicodedata as _u
+    def _n(s): return _u.normalize('NFKD',s).lower().replace(' ','').replace('rm','')
+    if not hasattr(openclaw_webhook,'_seen'): openclaw_webhook._seen={}
+    _k=f"{from_number}:{_n(text)}"
+    _now=_t.time()
+    _prev=openclaw_webhook._seen.get(from_number,('',0))
+    if _n(text)==_n(_prev[0]) and _now-_prev[1]<30:
+        print(f'DEBUG: Dropped echo: {text}')
+        return {'status':'ok'}
+    openclaw_webhook._seen[from_number]=(text,_now)
 
     customer_id = get_or_create_customer(from_number)
     try:
