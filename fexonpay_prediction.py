@@ -39,7 +39,7 @@ Format the output for WhatsApp (use bold, emojis). Keep it concise.
 """
 
     response = together_client.chat.completions.create(
-        model="google/gemma-4-31b-it",
+        model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
         messages=[{"role": "user", "content": prompt}]
     )
     
